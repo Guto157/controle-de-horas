@@ -50,6 +50,9 @@ jobs:
       - name: Sincronizar aplicativo
         run: npx cap sync android
 
+      - name: Bloquear rotação de tela
+        run: node scripts/lock-portrait.js
+
       - name: Gerar APK de teste
         run: |
           cd android
