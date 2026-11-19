@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101827"><title>Meu Ponto</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1220;--panel:#121d2e;--line:#26364d;--muted:#91a2b9;--text:#f3f6fb;--accent:#62d6a5;--blue:#83b7ff;--red:#ff8585}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px system-ui,-apple-system,Segoe UI,sans-serif}button,input,select{font:inherit}header{padding:22px max(18px,calc((100% - 900px)/2));background:#101a2a;border-bottom:1px solid var(--line)}header strong{font-size:19px;letter-spacing:.2px}.wrap{max-width:900px;margin:auto;padding:18px 16px 100px}.tabs{display:flex;gap:7px;overflow:auto;padding:12px max(16px,calc((100% - 900px)/2));background:#101a2a;position:sticky;top:0;z-index:2;border-bottom:1px solid var(--line)}.tabs button{white-space:nowrap;border:1px solid var(--line);border-radius:10px;padding:9px 13px;background:transparent;color:var(--muted)}.tabs button.active{background:var(--accent);color:#082016;border-color:var(--accent);font-weight:700}.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:17px;margin:0 0 14px}.panel h2{font-size:17px;margin:0 0 14px}.muted,.hint{color:var(--muted)}.hint{font-size:12px;line-height:1.5}.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.stat{background:#0d1726;border:1px solid var(--line);border-radius:12px;padding:14px}.stat b{display:block;font-size:23px;margin-top:5px}.stat small{color:var(--muted)}.green{color:var(--accent)}.blue{color:var(--blue)}.red{color:var(--red)}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.field{display:flex;flex-direction:column;gap:6px}.field label{font-size:13px;color:var(--muted)}input,select{width:100%;background:#0b1524;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:11px;min-width:0}input:focus,select:focus{outline:2px solid #62d6a555;border-color:var(--accent)}.check{display:flex;align-items:center;gap:9px;margin:12px 0;color:var(--muted)}.check input{width:auto}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}button.primary,button.secondary,button.danger{border:0;border-radius:10px;padding:11px 15px;font-weight:650;cursor:pointer}.primary{background:var(--accent);color:#082016}.secondary{background:#26364d;color:var(--text)}.danger{background:#512b35;color:#ffd9df}.entry{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}.entry:last-child{border:0}.entry strong{display:block}.entry small{color:var(--muted)}.money{font-weight:700}.hidden{display:none!important}.empty{text-align:center;padding:25px;color:var(--muted)}.section-title{display:flex;justify-content:space-between;align-items:center;gap:10px}.section-title h2{margin:0}.pill{font-size:11px;color:var(--accent);border:1px solid #39765e;border-radius:20px;padding:4px 8px}@media(max-width:560px){.grid{grid-template-columns:1fr 1fr}.stats{grid-template-columns:1fr 1fr}.wrap{padding-top:13px}}@media(max-width:370px){.grid,.stats{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><strong>Meu Ponto</strong></header>
+<nav class="tabs" aria-label="Navegação">
+<button class="active" data-tab="inicio">Resumo</button><button data-tab="ponto">Ponto</button><button data-tab="horas">Horas</button><button data-tab="valores">Valores</button><button data-tab="config">Config.</button>
+</nav>
+<main class="wrap">
+<section id="inicio" class="view">
+<div class="panel"><div class="section-title"><h2>Período atual</h2><span class="pill" id="periodLabel">Em andamento</span></div><p class="muted" id="periodDates">Configure o dia de fechamento do ponto.</p><div class="stats"><div class="stat"><small>Horas extras</small><b id="totalHours">0h00</b></div><div class="stat"><small>Valor estimado</small><b class="green" id="totalMoney">R$ 0,00</b></div><div class="stat"><small>Extra 70%</small><b class="blue" id="hours70">0h00</b></div><div class="stat"><small>Extra 100%</small><b class="blue" id="hours100">0h00</b></div></div></div>
+<div class="panel"><h2>Últimos registros</h2><div id="recent"></div></div>
+</section>
+<section id="ponto" class="view hidden">
+<div class="panel"><h2>Registrar jornada</h2><form id="punchForm"><div class="grid">
+<div class="field"><label for="pDate">Data</label><input id="pDate" type="date" required></div>
+<div class="field"><label for="pIn">Entrada</label><input id="pIn" type="time" required></div>
+<div class="field"><label for="pOut">Saída</label><input id="pOut" type="time" required></div>
+<div class="field"><label for="pBreak">Intervalo (minutos)</label><input id="pBreak" type="number" min="0" step="1" value="60" required></div>
+</div><label class="check"><input id="pHoliday" type="checkbox"> Trabalhei em feriado</label><div class="hint" id="preview">Preencha os horários para visualizar o cálculo.</div><div class="actions"><button class="primary" type="submit">Salvar ponto</button></div></form></div>
+<div class="panel"><h2>Registros do período</h2><div id="punchList"></div></div>
+</section>
+<section id="horas" class="view hidden"><div class="panel"><h2>Horas por adicional</h2><div class="stats"><div class="stat"><small>Segunda a sexta</small><b id="hWeek">0h00</b><small>Adicional configurado</small></div><div class="stat"><small>Sábado</small><b id="hSat">0h00</b><small>Adicional configurado</small></div><div class="stat"><small>Domingo</small><b id="hSun">0h00</b><small>Adicional configurado</small></div><div class="stat"><small>Feriado</small><b id="hHoliday">0h00</b><small>Adicional configurado</small></div></div></div><div class="panel"><h2>Detalhamento</h2><div id="hourDetails"></div></div></section>
+<section id="valores" class="view hidden"><div class="panel"><h2>Demonstrativo financeiro</h2><div id="valueDetails"></div><div class="entry"><strong>Total estimado</strong><b class="green money" id="valueTotal">R$ 0,00</b></div><p class="hint">Estimativa bruta baseada no salário e nos adicionais cadastrados. Não substitui o cálculo oficial da folha de pagamento.</p></div></section>
+<section id="config" class="view hidden">
+<div class="panel"><h2>Dados do trabalho</h2><form id="configForm">
+<div class="grid">
+<div class="field"><label for="salary">Salário-base mensal (R$)</label><input id="salary" type="number" min="0" step=".01" placeholder="3100"></div>
+<div class="field"><label for="divisor">Divisor mensal de horas</label><input id="divisor" type="number" min="1" step="1" value="220"></div>
+<div class="field"><label for="dailyHours">Jornada normal por dia (horas)</label><input id="dailyHours" type="number" min="0" max="24" step=".25" value="8"></div>
+<div class="field"><label for="closeDay">Dia de fechamento do ponto</label><input id="closeDay" type="number" min="1" max="31" value="30"></div>
+<div class="field"><label for="perType">Adicional salarial</label><select id="perType"><option value="none">Nenhum</option><option value="periculosidade">Periculosidade</option><option value="insalubridade">Insalubridade</option></select></div>
+<div class="field"><label for="perValue">Percentual (%) ou valor (R$)</label><input id="perValue" type="number" min="0" step=".01" value="30"></div>
+<div class="field"><label for="weekRate">Extra dias úteis (%)</label><input id="weekRate" type="number" min="0" step=".01" value="70"></div>
+<div class="field"><label for="satRate">Extra sábado (%)</label><input id="satRate" type="number" min="0" step=".01" value="70"></div>
+<div class="field"><label for="sunRate">Extra domingo (%)</label><input id="sunRate" type="number" min="0" step=".01" value="100"></div>
+<div class="field"><label for="holidayRate">Extra feriado (%)</label><input id="holidayRate" type="number" min="0" step=".01" value="100"></div>
+</div><p class="hint">Periculosidade é calculada como percentual do salário-base. Insalubridade deve ser informada como valor mensal em reais para evitar presumir sua base de cálculo.</p><div class="actions"><button class="primary" type="submit">Salvar configurações</button></div></form></div>
+<div class="panel"><h2>Dados e segurança</h2><p class="hint">Seus registros ficam salvos neste aparelho e navegador. Limpar os dados do navegador pode apagar essas informações. Faça uma cópia de segurança periodicamente.</p><div class="actions"><button class="secondary" id="exportBtn">Exportar backup</button><label class="secondary" style="display:inline-flex;align-items:center;cursor:pointer">Importar backup<input id="importFile" type="file" accept="application/json" hidden></label></div></div>
+</section>
+</main>
+<script>
+const KEY='meuPonto_v1';
+const defaults={salary:0,divisor:220,dailyHours:8,closeDay:30,perType:'none',perValue:0,weekRate:70,satRate:70,sunRate:100,holidayRate:100};
+let db=load();
+function load(){try{const x=JSON.parse(localStorage.getItem(KEY)||'{}');return{config:{...defaults,...x.config},punches:Array.isArray(x.punches)?x.punches:[]}}catch{return{config:{...defaults},punches:[]}}}
+function save(){localStorage.setItem(KEY,JSON.stringify(db));render()}
+const $=id=>document.getElementById(id);
+const num=v=>Math.max(0,Number(v)||0);
+const money=v=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(v||0);
+const hm=m=>{m=Math.max(0,Math.round(m));return Math.floor(m/60)+'h'+String(m%60).padStart(2,'0')};
+const dateFmt=s=>new Date(s+'T12:00:00').toLocaleDateString('pt-BR');
+function period(){const c=db.config,now=new Date(),day=now.getDate(),close=Math.min(31,Math.max(1,+c.closeDay||30));let end=new Date(now.getFullYear(),now.getMonth(),close);if(day>close)end=new Date(now.getFullYear(),now.getMonth()+1,close);let start=new Date(end.getFullYear(),end.getMonth()-1,close+1);return{start,end}}
+function inPeriod(p){const {start,end}=period(),d=new Date(p.date+'T12:00:00');return d>=start&&d<=end}
+function classify(p){const dow=new Date(p.date+'T12:00:00').getDay();if(p.holiday)return'holiday';if(dow===0)return'sun';if(dow===6)return'sat';return'week'}
+function calc(p){let [ih,im]=p.in.split(':').map(Number),[oh,om]=p.out.split(':').map(Number);let start=ih*60+im,end=oh*60+om;if(end<=start)end+=1440;let worked=Math.max(0,end-start-num(p.break));let expected=Math.round(num(db.config.dailyHours)*60);let extra=Math.max(0,worked-expected);return{worked,extra,kind:classify(p)}}
+function hourly(){const c=db.config,base=num(c.salary);let addition=0;if(c.perType==='periculosidade')addition=base*num(c.perValue)/100;else if(c.perType==='insalubridade')addition=num(c.perValue);return(base+addition)/Math.max(1,num(c.divisor))}
+function totals(){const a={week:0,sat:0,sun:0,holiday:0},c=db.config;let amount=0;db.punches.filter(inPeriod).forEach(p=>{const x=calc(p);a[x.kind]+=x.extra;const rate={week:c.weekRate,sat:c.satRate,sun:c.sunRate,holiday:c.holidayRate}[x.kind];amount+=x.extra/60*hourly()*(1+num(rate)/100)});return{a,amount,total:Object.values(a).reduce((s,v)=>s+v,0)}}
+function render(){const t=totals(),periodData=period();$('periodDates').textContent=dateFmt(periodData.start.toISOString().slice(0,10))+' até '+dateFmt(periodData.end.toISOString().slice(0,10));$('totalHours').textContent=hm(t.total);$('totalMoney').textContent=money(t.amount);$('hours70').textContent=hm(t.a.week+t.a.sat);$('hours100').textContent=hm(t.a.sun+t.a.holiday);$('hWeek').textContent=hm(t.a.week);$('hSat').textContent=hm(t.a.sat);$('hSun').textContent=hm(t.a.sun);$('hHoliday').textContent=hm(t.a.holiday);$('valueTotal').textContent=money(t.amount);
+const labels={week:'Dias úteis',sat:'Sábados',sun:'Domingos',holiday:'Feriados'},rates={week:db.config.weekRate,sat:db.config.satRate,sun:db.config.sunRate,holiday:db.config.holidayRate};$('hourDetails').innerHTML=Object.keys(labels).map(k=>'<div class="entry"><span>'+labels[k]+' <small>('+rates[k]+'%)</small></span><b>'+hm(t.a[k])+'</b></div>').join('');
+$('valueDetails').innerHTML=Object.keys(labels).map(k=>{let v=t.a[k]/60*hourly()*(1+num(rates[k])/100);return'<div class="entry"><span>'+labels[k]+' <small>('+rates[k]+'%)</small></span><b class="money">'+money(v)+'</b></div>'}).join('');
+const list=db.punches.filter(inPeriod).sort((a,b)=>b.date.localeCompare(a.date));const html=list.map(p=>{let x=calc(p);return'<div class="entry"><span><strong>'+dateFmt(p.date)+'</strong><small>'+p.in+' às '+p.out+' · '+hm(x.worked)+' trabalhadas</small></span><span style="text-align:right"><b>'+hm(x.extra)+' extra</b><br><button class="danger" data-delete="'+p.id+'" style="padding:5px 9px;margin-top:5px">Excluir</button></span></div>'}).join('')||'<div class="empty">Nenhum ponto neste período.</div>';$('punchList').innerHTML=html;$('recent').innerHTML=list.slice(0,4).map(p=>'<div class="entry"><span><strong>'+dateFmt(p.date)+'</strong><small>'+p.in+' às '+p.out+'</small></span><b>'+hm(calc(p).extra)+' extra</b></div>').join('')||'<div class="empty">Seus registros aparecerão aqui.</div>';
+document.querySelectorAll('[data-delete]').forEach(b=>b.onclick=()=>{if(confirm('Excluir este registro de ponto?')){db.punches=db.punches.filter(p=>p.id!==b.dataset.delete);save()}});
+}
+function fillConfig(){Object.keys(defaults).forEach(k=>{if($(k))$(k).value=db.config[k]})}
+$('configForm').onsubmit=e=>{e.preventDefault();Object.keys(defaults).forEach(k=>db.config[k]=$(k).value);save();alert('Configurações salvas.')};
+$('punchForm').onsubmit=e=>{e.preventDefault();const p={id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),date:$('pDate').value,in:$('pIn').value,out:$('pOut').value,break:num($('pBreak').value),holiday:$('pHoliday').checked};if(!p.date||!p.in||!p.out)return;db.punches=db.punches.filter(x=>x.date!==p.date);db.punches.push(p);save();e.target.reset();$('pDate').value=new Date().toISOString().slice(0,10);$('pBreak').value=60;$('preview').textContent='Ponto registrado. Confira o resumo e as horas calculadas.'};
+function preview(){if(!$('pIn').value||!$('pOut').value)return;$('preview').textContent='Jornada estimada: '+hm(calc({date:$('pDate').value||new Date().toISOString().slice(0,10),in:$('pIn').value,out:$('pOut').value,break:num($('pBreak').value),holiday:$('pHoliday').checked}).worked)+' trabalhadas. O excedente será calculado pela jornada diária cadastrada.'}
+['pDate','pIn','pOut','pBreak','pHoliday'].forEach(id=>$(id).addEventListener('change',preview));
+document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.view').forEach(x=>x.classList.toggle('hidden',x.id!==b.dataset.tab));});
+$('exportBtn').onclick=()=>{const blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='backup-meu-ponto.json';a.click();URL.revokeObjectURL(url)};
+$('importFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const x=JSON.parse(await f.text());if(!x.config||!Array.isArray(x.punches))throw Error();db={config:{...defaults,...x.config},punches:x.punches};save();fillConfig();alert('Backup importado.')}catch{alert('Arquivo de backup inválido.')}e.target.value=''};
+fillConfig();$('pDate').value=new Date().toISOString().slice(0,10);render();
+</script>
+</body></html>
